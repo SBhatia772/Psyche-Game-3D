@@ -143,18 +143,19 @@ public class VattalusSpaceshipController : MonoBehaviour
                 
                     //Apply move speed
                     if (accelerationInput > 0f)
-                    { 
+                    {
+                        rb.AddForce(transform.forward * accelerationInput * fwdThrust * Time.deltaTime);
                         transform.position += transform.forward * accelerationInput * Time.deltaTime;
                         
                     }
                     if (accelerationInput < 0f)
                     {
-                        //rb.AddForce(transform.forward * accelerationInput * backThrust * Time.deltaTime);
-                        transform.position += (transform.forward) * accelerationInput * Time.deltaTime;
+                        rb.AddForce(transform.forward * accelerationInput * backThrust * Time.deltaTime);
+                        transform.position += (transform.forward) * -1 * accelerationInput * Time.deltaTime;
                     }
                     if (upDownInput != 0f)
                     {
-                        //rb.AddForce(transform.up * upDownInput * verticalThrust * Time.deltaTime);
+                        rb.AddForce(transform.up * upDownInput * verticalThrust * Time.deltaTime);
                         transform.position += (transform.up) * upDownInput * accelerationInput * Time.deltaTime;                       
                     }
                        

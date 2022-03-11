@@ -26,6 +26,7 @@ public class PlanetBehavior : MonoBehaviour
     void StartEnteringAtmosphere()
     {
         //probably a transition coroutine
+        print("Entering Atmosphere!");
     }
 
     private void Start()
@@ -35,30 +36,30 @@ public class PlanetBehavior : MonoBehaviour
         ship = GameObject.Find("Space Ship").GetComponent<Transform>();
 
         debrisGrid.SetActive(false);
-        atmosphere.SetActive(false);
+        atmosphere.SetActive(false);    
     }
 
     private void Update()
     {
-        float shipSpeed = 0f; //tie this to your ships speed
+        float shipSpeed = Vector3.Magnitude(ship.GetComponent<Rigidbody>().velocity); //tie this to your ships speed
         float shiptToPlaneDistance = Vector3.Distance(transform.position, ship.position);
-        if (movingToPlanet)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, ship.position, shipSpeed);
-            transform.localScale *= (1/ shiptToPlaneDistance) * distanceScalePower;
-        }
+
+        Debug.Log("Ship speed" + shipSpeed);
+        Debug.Log("distance to planet" + shiptToPlaneDistance);
 
 
-        if(shiptToPlaneDistance < 1)
+        if(shiptToPlaneDistance <= 2000)
         {
             StartEnteringAtmosphere();
         }
-        if (shiptToPlaneDistance < 3)
+        if (shiptToPlaneDistance < 3000)
         {
+
+            //atmosphere.SetActive(true);
             atmosphere.SetActive(true);
             //start triggering particles and cloud effects. beeping etc
         }
-        if (shiptToPlaneDistance < 6)
+        if (shiptToPlaneDistance < 4000)
         {
             debrisGrid.SetActive(true);
             //initial particles and shaking, start to make sounds
