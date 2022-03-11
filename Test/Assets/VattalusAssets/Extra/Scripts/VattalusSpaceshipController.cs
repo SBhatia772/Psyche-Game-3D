@@ -58,6 +58,7 @@ public class VattalusSpaceshipController : MonoBehaviour
     public VattalusInteractible cockpitDoor;
     public VattalusInteractible ramp;
     public VattalusInteractible hologram;
+    public float speed;
     private bool cockpitDoorLastFrameState = false; //this is a janky way of checking if the cockpit door has been opened. There are more elegant ways of doing this but I didn't want to overcomplicate things
 
     public Transform Joystick;
@@ -65,6 +66,8 @@ public class VattalusSpaceshipController : MonoBehaviour
 
     private Vector3 joystickAngleTarget = new Vector3();
     private float throttleAngleTarget = 0f;
+    private Vector3 lastPosition;
+    public float fuel;
 
     [Header("Sound Effects")]
     public VattalusEngineSoundController IdlingSound;
@@ -110,10 +113,19 @@ public class VattalusSpaceshipController : MonoBehaviour
         if (landingGearList == null || landingGearList.Count == 0) Debug.Log("<color=#FF0000>VattalusAssets: [ShipController] Landing gear references null or empty.</color>");
         if (pilotSeat == null) Debug.Log("<color=#FF0000>VattalusAssets: [ShipController] Missing pilot seat reference.</color>");
 
+        lastPosition = transform.position;
+
+        fuel = 10000;
     }
+
+    
 
     private void FixedUpdate()
     {
+
+        speed = (transform.position - lastPosition).magnitude/Time.fixedDeltaTime;
+        lastPosition = transform.position;
+
         //We set the command inputs based on keypresses (or other input methods). They will be processed later
         accelerationInput = 0f;
         strafeInput = 0f;
@@ -124,11 +136,19 @@ public class VattalusSpaceshipController : MonoBehaviour
 
         //Get inputs
         if (enableMovement)
-        {
-            
+        { 
 
-            if (Input.GetKey(accelerateInputKey)) accelerationInput = 50f;if (Input.GetKey(decelerateInputKey)) accelerationInput = - 50f;
-            if (Input.GetKey(strafeRightInputKey)) strafeInput = 1f; if (Input.GetKey(strafeLeftInputKey)) strafeInput -= 1f;
+            if (Input.GetKey(accelerateInputKey)) accelerationInput = 50f; 
+            if (Input.GetKey(decelerateInputKey)) accelerationInput = -50f;
+
+            if (Input.GetKey(strafeRightInputKey))
+            {
+                strafeInput = 1f;
+            }
+            if (Input.GetKey(strafeLeftInputKey))
+            {
+                strafeInput -= 1f;
+            }
             if (Input.GetKey(moveUpInputKey)) upDownInput = 1f; if (Input.GetKey(moveDownInputKey)) upDownInput -= 1f;
             if (Input.GetKey(rollRightInputKey)) rollInput = 1f; if (Input.GetKey(rollLeftInputKey)) rollInput -= 1f;
             if (Input.GetKey(pitchUp)) pitchInput = 1f; if (Input.GetKey(pitchDown)) pitchInput -= 1f;
@@ -142,24 +162,38 @@ public class VattalusSpaceshipController : MonoBehaviour
                 //              the code below is a very basic implementation of physics movement using forces applied to the rigidbody
                 
                     //Apply move speed
-                    if (accelerationInput > 0f)
+                    if (accelerationInput > 0f && fuel > 0)
                     {
-                        rb.AddForce(transform.forward * accelerationInput * fwdThrust * Time.deltaTime);
+                        //rb.AddForce(transform.forward * accelerationInput * fwdThrust * Time.deltaTime);
                         transform.position += transform.forward * accelerationInput * Time.deltaTime;
+                        fuel -= 1f;
                         
                     }
-                    if (accelerationInput < 0f)
+                    if (accelerationInput < 0f && fuel > 0)
                     {
-                        rb.AddForce(transform.forward * accelerationInput * backThrust * Time.deltaTime);
-                        transform.position += (transform.forward) * -1 * accelerationInput * Time.deltaTime;
+                        //rb.AddForce(transform.forward * accelerationInput * backThrust * Time.deltaTime);
+                        transform.position += (transform.forward) * accelerationInput * Time.deltaTime;
+                        fuel -= 1f;
                     }
-                    if (upDownInput != 0f)
+                    if (upDownInput != 0f && fuel > 0)
                     {
-                        rb.AddForce(transform.up * upDownInput * verticalThrust * Time.deltaTime);
-                        transform.position += (transform.up) * upDownInput * accelerationInput * Time.deltaTime;                       
+                        //rb.AddForce(transform.up * upDownInput * verticalThrust * Time.deltaTime);
+                        transform.position += (transform.up) * upDownInput * 50 * Time.deltaTime;
+                        fuel -= 1f;
                     }
-                       
-                    if (strafeInput != 0f) rb.AddForce(transform.right * strafeInput * lateralThrust * Time.deltaTime);
+
+                    if (strafeInput > 0f && fuel > 0)
+                    { 
+                        //rb.AddForce(transform.right * strafeInput * lateralThrust * Time.deltaTime);
+                        transform.position += transform.right * strafeInput * 50 * Time.deltaTime;
+                        fuel -= 1f;
+                    }
+
+                    if (strafeInput < 0f && fuel > 0)
+                    {
+                        transform.position += transform.right * strafeInput * 50 * Time.deltaTime;
+                        fuel -= 1f;
+                    }
 
                     ////ROTATION
                     rb.AddRelativeTorque(
@@ -181,23 +215,23 @@ public class VattalusSpaceshipController : MonoBehaviour
                         thruster.SetThrust(0f);
 
                         //Depending on which input is given to the spaceship, enable thrust effects on thrusters whose directions correspond with given input
-                        if (accelerationInput > 0 && thruster.usedForAcceleration) thruster.SetThrust(accelerationInput);
-                        if (accelerationInput < 0 && thruster.usedForDeceleration) thruster.SetThrust(-accelerationInput);
+                        if (accelerationInput > 0 && fuel > 0 && thruster.usedForAcceleration) thruster.SetThrust(accelerationInput);
+                        if (accelerationInput < 0 && fuel > 0 && thruster.usedForDeceleration) thruster.SetThrust(-accelerationInput);
 
-                        if (strafeInput > 0 && thruster.usedForStrafeRight) thruster.SetThrust(strafeInput);
-                        if (strafeInput < 0 && thruster.usedForStrafeLeft) thruster.SetThrust(-strafeInput);
+                        if (strafeInput > 0 && fuel > 0 && thruster.usedForStrafeRight) thruster.SetThrust(strafeInput);
+                        if (strafeInput < 0 && fuel > 0 && thruster.usedForStrafeLeft) thruster.SetThrust(-strafeInput);
+                        
+                        if (upDownInput > 0 && fuel > 0 &&  thruster.usedForMoveUp) thruster.SetThrust(upDownInput);
+                        if (upDownInput < 0 && fuel > 0 && thruster.usedForMoveDown) thruster.SetThrust(-upDownInput);
 
-                        if (upDownInput > 0 && thruster.usedForMoveUp) thruster.SetThrust(upDownInput);
-                        if (upDownInput < 0 && thruster.usedForMoveDown) thruster.SetThrust(-upDownInput);
+                        if (rollInput > 0 && fuel > 0 && thruster.usedForRollRight) thruster.SetThrust(rollInput);
+                        if (rollInput < 0 && fuel > 0 && thruster.usedForRollLeft) thruster.SetThrust(-rollInput);
 
-                        if (rollInput > 0 && thruster.usedForRollRight) thruster.SetThrust(rollInput);
-                        if (rollInput < 0 && thruster.usedForRollLeft) thruster.SetThrust(-rollInput);
+                        if (pitchInput > 0 && fuel > 0 && thruster.usedForPitchUp) thruster.SetThrust(pitchInput);
+                        if (pitchInput < 0 && fuel > 0 && thruster.usedForPitchDown) thruster.SetThrust(-pitchInput);
 
-                        if (pitchInput > 0 && thruster.usedForPitchUp) thruster.SetThrust(pitchInput);
-                        if (pitchInput < 0 && thruster.usedForPitchDown) thruster.SetThrust(-pitchInput);
-
-                        if (yawInput > 0 && thruster.usedForYawRight) thruster.SetThrust(yawInput);
-                        if (yawInput < 0 && thruster.usedForYawLeft) thruster.SetThrust(-yawInput);
+                        if (yawInput > 0 && fuel > 0 && thruster.usedForYawRight) thruster.SetThrust(yawInput);
+                        if (yawInput < 0 && fuel > 0 && thruster.usedForYawLeft) thruster.SetThrust(-yawInput);
                     }
                 }
             }

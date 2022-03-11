@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class PlanetBehavior : MonoBehaviour
 {
-    public Transform ship;
+    public GameObject ship;
 
     private GameObject debrisGrid;
     private GameObject atmosphere;
 
     bool movingToPlanet;
-    float distanceScalePower;
+
+    public float shipSpeed;
+    public float shipToPlanetDistance;
 
     public void StartMovingToPlanet()
     {
@@ -33,7 +35,7 @@ public class PlanetBehavior : MonoBehaviour
     {
         debrisGrid = GameObject.Find("Debris Grid");
         atmosphere = GameObject.Find("Atmosphere");
-        ship = GameObject.Find("Space Ship").GetComponent<Transform>();
+        ship = GameObject.Find("Space Ship");
 
         debrisGrid.SetActive(false);
         atmosphere.SetActive(false);    
@@ -41,25 +43,22 @@ public class PlanetBehavior : MonoBehaviour
 
     private void Update()
     {
-        float shipSpeed = Vector3.Magnitude(ship.GetComponent<Rigidbody>().velocity); //tie this to your ships speed
-        float shiptToPlaneDistance = Vector3.Distance(transform.position, ship.position);
-
-        Debug.Log("Ship speed" + shipSpeed);
-        Debug.Log("distance to planet" + shiptToPlaneDistance);
+        shipSpeed = ship.GetComponent<VattalusSpaceshipController>().speed; //tie this to your ships speed
+        shipToPlanetDistance = Vector3.Distance(transform.position, ship.transform.position);
 
 
-        if(shiptToPlaneDistance <= 2000)
+        if(shipToPlanetDistance <= 2000)
         {
             StartEnteringAtmosphere();
         }
-        if (shiptToPlaneDistance < 3000)
+        if (shipToPlanetDistance < 3000)
         {
 
             //atmosphere.SetActive(true);
             atmosphere.SetActive(true);
             //start triggering particles and cloud effects. beeping etc
         }
-        if (shiptToPlaneDistance < 4000)
+        if (shipToPlanetDistance < 4000)
         {
             debrisGrid.SetActive(true);
             //initial particles and shaking, start to make sounds
