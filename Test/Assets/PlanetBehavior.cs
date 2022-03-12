@@ -33,11 +33,9 @@ public class PlanetBehavior : MonoBehaviour
 
     private void Start()
     {
-        debrisGrid = GameObject.Find("Debris Grid");
         atmosphere = GameObject.Find("Atmosphere");
         ship = GameObject.Find("Space Ship");
 
-        debrisGrid.SetActive(false);
         atmosphere.SetActive(false);    
     }
 
@@ -45,6 +43,12 @@ public class PlanetBehavior : MonoBehaviour
     {
         shipSpeed = ship.GetComponent<VattalusSpaceshipController>().speed; //tie this to your ships speed
         shipToPlanetDistance = Vector3.Distance(transform.position, ship.transform.position);
+
+
+        if(shipToPlanetDistance < 600 && ship.GetComponent<VattalusSpaceshipController>().fuel > 0)
+        {
+            //change scene probably using a couroutine
+        }
 
 
         if(shipToPlanetDistance <= 2000)
@@ -60,7 +64,6 @@ public class PlanetBehavior : MonoBehaviour
         }
         if (shipToPlanetDistance < 4000)
         {
-            debrisGrid.SetActive(true);
             //initial particles and shaking, start to make sounds
         }
     }

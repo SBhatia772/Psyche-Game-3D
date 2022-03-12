@@ -126,6 +126,12 @@ public class VattalusSpaceshipController : MonoBehaviour
         speed = (transform.position - lastPosition).magnitude/Time.fixedDeltaTime;
         lastPosition = transform.position;
 
+        if (fuel < 0)
+        {
+            fuel = 0;
+            Debug.Log("Game Over!");
+        }
+
         //We set the command inputs based on keypresses (or other input methods). They will be processed later
         accelerationInput = 0f;
         strafeInput = 0f;
