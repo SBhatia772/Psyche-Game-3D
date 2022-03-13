@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class LevelController : MonoBehaviour
 {
-    private PlanetBehavior planet;
+    private GameObject planet;
 
     public void StartPlanetTravel()
     {
@@ -22,16 +22,13 @@ public class LevelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        planet= FindObjectOfType<PlanetBehavior>();
+        planet = GameObject.Find("Planet");
         DontDestroyOnLoad(gameObject);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (planet.isMovingToPlanet())
-        {
-            StartPlanetTravel();
-        }
+       
     }
 }

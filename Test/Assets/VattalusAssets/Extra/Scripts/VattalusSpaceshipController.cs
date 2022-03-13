@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 //This script handles the functions specific to the spaceship (controls, landing gear animations, etc)
@@ -118,6 +119,13 @@ public class VattalusSpaceshipController : MonoBehaviour
         fuel = 10000;
     }
 
+
+    IEnumerator gameEndRestart()
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("Test");
+    }
+
     
 
     private void FixedUpdate()
@@ -130,6 +138,7 @@ public class VattalusSpaceshipController : MonoBehaviour
         {
             fuel = 0;
             Debug.Log("Game Over!");
+
         }
 
         //We set the command inputs based on keypresses (or other input methods). They will be processed later

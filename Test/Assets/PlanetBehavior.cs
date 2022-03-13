@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlanetBehavior : MonoBehaviour
 {
@@ -37,6 +38,12 @@ public class PlanetBehavior : MonoBehaviour
         ship = GameObject.Find("Space Ship");
 
         atmosphere.SetActive(false);    
+    }
+
+    IEnumerator changeScene()
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("Landing Scene");
     }
 
     private void Update()
