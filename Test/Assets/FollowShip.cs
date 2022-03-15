@@ -1,19 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FollowShip : MonoBehaviour
 {
     public Transform ship;
+    public Rigidbody shipRB;
+    public float crashSpeed;
+    public Text speedText;
+    public Text fuelText;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        shipRB = ship.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        speedText.text = "Speed: " + ship.GetComponent<Rigidbody>().velocity.magnitude;
+        fuelText.text = "Fuel: " + ship.GetComponent<VattalusSpaceshipController>().fuel;
         transform.position = ship.position;
     }
 
@@ -21,7 +29,16 @@ public class FollowShip : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Terrain"))
         {
-            print("Switch to landing mode");
+            shipRB.isKinematic = false;
+            shipRB.useGravity = true;
+
+            if(shipRB.velocity.magnitude > crashSpeed)
+            {
+                print("ship crashed");
+            }
+            
+
+
         }
     }
 }

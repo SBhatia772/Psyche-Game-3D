@@ -23,7 +23,7 @@ public class LevelController : MonoBehaviour
     void Start()
     {
         planet = GameObject.Find("Planet");
-        DontDestroyOnLoad(gameObject);
+        
     }
 
     // Update is called once per frame

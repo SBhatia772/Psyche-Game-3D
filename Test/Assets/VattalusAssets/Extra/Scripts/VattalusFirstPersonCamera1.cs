@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class VattalusFirstPersonCamera : MonoBehaviour
+public class VattalusFirstPersonCamera1 : MonoBehaviour
 {
     //This script handles the player controls
 
@@ -15,7 +15,7 @@ public class VattalusFirstPersonCamera : MonoBehaviour
     public Vector2 camFovRange = new Vector2(15f, 60f);
     private float fovTarget = 60f;
 
-    private VattalusSceneController.ControlModeTypes controlMode;
+    private VattalusSceneController1.ControlModeTypes controlMode;
 
     // horizontal and vertical rotation speeds
     public float cameraSensitivity = 90;
@@ -103,7 +103,7 @@ public class VattalusFirstPersonCamera : MonoBehaviour
 
         //restrict the camera angle
         rotationY = Mathf.Clamp(rotationY, -90, 90);
-        if (controlMode == VattalusSceneController.ControlModeTypes.Seated)
+        if (controlMode == VattalusSceneController1.ControlModeTypes.Seated)
         {
             rotationX = Mathf.Clamp(rotationX, -cameraAngleConstraints.x, cameraAngleConstraints.x);
             rotationY = Mathf.Clamp(rotationY, -cameraAngleConstraints.y, cameraAngleConstraints.y);
@@ -156,7 +156,7 @@ public class VattalusFirstPersonCamera : MonoBehaviour
         //PLAYER MOVEMENT
         #region Player Movement
 
-        if (controlMode == VattalusSceneController.ControlModeTypes.Walking || controlMode == VattalusSceneController.ControlModeTypes.Flying)
+        if (controlMode == VattalusSceneController1.ControlModeTypes.Walking || controlMode == VattalusSceneController1.ControlModeTypes.Flying)
         {
             //for walking / flying, apply the X axis (left/right) mouse movements to the entire character
             transform.localRotation = Quaternion.AngleAxis(rotationX, Vector3.up);
@@ -166,7 +166,7 @@ public class VattalusFirstPersonCamera : MonoBehaviour
             float vertical = Input.GetAxis("Vertical") * (Input.GetKey(sprintKey) ? SprintSpeed : WalkSpeed);
             characterController.Move((transform.right * horizontal + transform.forward * vertical) * Time.deltaTime);
 
-            if (controlMode == VattalusSceneController.ControlModeTypes.Walking)
+            if (controlMode == VattalusSceneController1.ControlModeTypes.Walking)
             {
                 // when walking, apply gravity
                 if (characterController.isGrounded)
@@ -180,7 +180,7 @@ public class VattalusFirstPersonCamera : MonoBehaviour
                 }
             }
 
-            if (controlMode == VattalusSceneController.ControlModeTypes.Flying)
+            if (controlMode == VattalusSceneController1.ControlModeTypes.Flying)
             {
                 //use Q and E keys to climb/descent while flying
                 if (Input.GetKey(KeyCode.Q)) { transform.position += transform.up * WalkSpeed * Time.deltaTime; }
@@ -191,13 +191,13 @@ public class VattalusFirstPersonCamera : MonoBehaviour
     }
 
     //METHODS TO SET CONTROL MODE
-    public void SetPlayerControl(VattalusSceneController.ControlModeTypes newMode)
+    public void SetPlayerControl(VattalusSceneController1.ControlModeTypes newMode)
     {
         SetPlayerControl(newMode, null, new Vector2(180, 90));
         rotationX = transform.rotation.eulerAngles.y;
     }
 
-    public void SetPlayerControl(VattalusSceneController.ControlModeTypes newMode, [CanBeNull]Transform camAnchorRef, Vector2 angleConstraints)
+    public void SetPlayerControl(VattalusSceneController1.ControlModeTypes newMode, [CanBeNull]Transform camAnchorRef, Vector2 angleConstraints)
     {
         controlMode = newMode;
         cameraAnchor = camAnchorRef;

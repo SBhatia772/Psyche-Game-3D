@@ -48,13 +48,16 @@ public class PlanetBehavior : MonoBehaviour
 
     private void Update()
     {
-        shipSpeed = ship.GetComponent<VattalusSpaceshipController>().speed; //tie this to your ships speed
+        shipSpeed = ship.GetComponent<VattalusSpaceshipController1>().speed; //tie this to your ships speed
         shipToPlanetDistance = Vector3.Distance(transform.position, ship.transform.position);
 
+        
 
-        if(shipToPlanetDistance < 600 && ship.GetComponent<VattalusSpaceshipController>().fuel > 0)
+
+        if(shipToPlanetDistance < 600 && ship.GetComponent<VattalusSpaceshipController1>().fuel > 0)
         {
             //change scene probably using a couroutine
+            StartCoroutine(changeScene());
         }
 
 

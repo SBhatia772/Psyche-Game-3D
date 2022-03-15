@@ -20,26 +20,18 @@ public class Bounds : MonoBehaviour
         
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("Collision!");
-        Vector3 positionBeforeCollision = shipCollider.transform.position;
-
-        if (collision.gameObject.name == shipCollider.name)
-        {
-            shipCollider.transform.position = positionBeforeCollision;
-        }
-    }
+    
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Collision!");
-        Vector3 positionBeforeCollision = shipCollider.transform.position;
+        Vector3 positionOfColliderBeforeCollision = shipCollider.transform.position;
+        Vector3 positionOfShipBeforeCollision = ship.transform.position;
 
         if (other.tag.Equals("Player"))
         {
-            shipCollider.transform.position = positionBeforeCollision;
-            ship.transform.position = positionBeforeCollision;
+            shipCollider.transform.position = positionOfColliderBeforeCollision;
+            ship.transform.position = positionOfShipBeforeCollision;
         }
     }
 

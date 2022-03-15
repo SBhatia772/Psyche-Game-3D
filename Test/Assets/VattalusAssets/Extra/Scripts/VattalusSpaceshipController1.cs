@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 
 //This script handles the functions specific to the spaceship (controls, landing gear animations, etc)
-public class VattalusSpaceshipController : MonoBehaviour
+public class VattalusSpaceshipController1 : MonoBehaviour
 {
     [Tooltip("Should the landing gear be deployed at the start of the scene?")]
     public bool DeployLandingGearByDefault = false;
@@ -132,7 +132,6 @@ public class VattalusSpaceshipController : MonoBehaviour
     {
 
         speed = (transform.position - lastPosition).magnitude/Time.fixedDeltaTime;
-
         lastPosition = transform.position;
 
         if (fuel < 0)
@@ -152,18 +151,10 @@ public class VattalusSpaceshipController : MonoBehaviour
 
         //Get inputs
         if (enableMovement)
-        {
-            
-            if (Input.GetKey(accelerateInputKey))
-            {
-               
-                accelerationInput = 50f;
-            }
-            if (Input.GetKey(decelerateInputKey))
-            {
-                
-                accelerationInput = -50f;
-            }
+        { 
+
+            if (Input.GetKey(accelerateInputKey)) accelerationInput = 50f; 
+            if (Input.GetKey(decelerateInputKey)) accelerationInput = -50f;
 
             if (Input.GetKey(strafeRightInputKey))
             {
@@ -173,12 +164,7 @@ public class VattalusSpaceshipController : MonoBehaviour
             {
                 strafeInput -= 1f;
             }
-            if (Input.GetKey(moveUpInputKey))
-            {
-               
-                upDownInput = 1f;
-            }
-            if (Input.GetKey(moveDownInputKey)) upDownInput -= 1f;
+            if (Input.GetKey(moveUpInputKey)) upDownInput = 1f; if (Input.GetKey(moveDownInputKey)) upDownInput -= 1f;
             if (Input.GetKey(rollRightInputKey)) rollInput = 1f; if (Input.GetKey(rollLeftInputKey)) rollInput -= 1f;
             if (Input.GetKey(pitchUp)) pitchInput = 1f; if (Input.GetKey(pitchDown)) pitchInput -= 1f;
             if (Input.GetKey(yawRight)) yawInput = 1f; if (Input.GetKey(yawLeft)) yawInput -= 1f;
@@ -193,37 +179,35 @@ public class VattalusSpaceshipController : MonoBehaviour
                     //Apply move speed
                     if (accelerationInput > 0f && fuel > 0)
                     {
-                        
-                        rb.AddForce(transform.forward * accelerationInput * fwdThrust * Time.deltaTime);
-                        //transform.position += transform.forward * accelerationInput * Time.deltaTime;
+                        //rb.AddForce(transform.forward * accelerationInput * fwdThrust * Time.deltaTime);
+                        transform.position += transform.forward * accelerationInput * Time.deltaTime;
+
                         fuel -= 1f;
                         
                     }
                     if (accelerationInput < 0f && fuel > 0)
                     {
-                     
-                        rb.AddForce(transform.forward * accelerationInput * backThrust * Time.deltaTime);
-                        //transform.position += (transform.forward) * accelerationInput * Time.deltaTime;
+                        //rb.AddForce(transform.forward * accelerationInput * backThrust * Time.deltaTime);
+                        transform.position += (transform.forward) * accelerationInput * Time.deltaTime;
                         fuel -= 1f;
                     }
                     if (upDownInput != 0f && fuel > 0)
                     {
-                        rb.AddForce(transform.up * upDownInput * verticalThrust * Time.deltaTime);
-                        //transform.position += (transform.up) * upDownInput * 50 * Time.deltaTime;
+                        //rb.AddForce(transform.up * upDownInput * verticalThrust * Time.deltaTime);
+                        transform.position += (transform.up) * upDownInput * 50 * Time.deltaTime;
                         fuel -= 1f;
                     }
 
                     if (strafeInput > 0f && fuel > 0)
-                    { 
-                        rb.AddForce(transform.right * strafeInput * lateralThrust * Time.deltaTime);
-                        //transform.position += transform.right * strafeInput * 50 * Time.deltaTime;
+                    {
+                        //rb.AddForce(transform.right * strafeInput * lateralThrust * Time.deltaTime);
+                        transform.position += transform.right * strafeInput * 50 * Time.deltaTime;
                         fuel -= 1f;
                     }
 
                     if (strafeInput < 0f && fuel > 0)
                     {
-                        //transform.position += transform.right * strafeInput * 50 * Time.deltaTime;
-                        rb.AddForce(transform.right * strafeInput * lateralThrust * Time.deltaTime);
+                        transform.position += transform.right * strafeInput * 50 * Time.deltaTime;
                         fuel -= 1f;
                     }
 

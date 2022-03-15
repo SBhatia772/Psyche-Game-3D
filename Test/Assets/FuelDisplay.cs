@@ -16,6 +16,6 @@ public class FuelDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     { 
-        myText.text = "Fuel: " + ship.GetComponent<VattalusSpaceshipController>().fuel.ToString();
+        myText.text = "Fuel: " + ship.GetComponent<VattalusSpaceshipController1>().fuel.ToString();
     }
 }
