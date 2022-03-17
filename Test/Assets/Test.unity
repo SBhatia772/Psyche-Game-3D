@@ -80410,9 +80410,21 @@ MonoBehaviour:
   yawThrust: 5
   listOfThrusters:
   - {fileID: 2846142745841410529}
+  - {fileID: 826843536}
+  - {fileID: 144804784}
+  - {fileID: 1083322243}
   - {fileID: 2846142744839438910}
+  - {fileID: 1003114791}
+  - {fileID: 76314072}
+  - {fileID: 1189706819}
   - {fileID: 2846142744369487765}
+  - {fileID: 34579810}
+  - {fileID: 1915171838}
+  - {fileID: 914569810}
   - {fileID: 2846142744620678355}
+  - {fileID: 1193898105}
+  - {fileID: 58314943}
+  - {fileID: 710658443}
   landingGearList:
   - {fileID: 4649512485932292666}
   - {fileID: 4943318538825873453}

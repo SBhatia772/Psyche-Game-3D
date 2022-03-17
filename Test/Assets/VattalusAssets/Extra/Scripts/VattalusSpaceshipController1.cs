@@ -351,7 +351,7 @@ public class VattalusSpaceshipController1 : MonoBehaviour
     //when the player sits in the pilot seat, play the cockpit animation and close the cockpit door, inversely, open it when standing up
     public void SitInPilotSeat()
     {
-        FindObjectOfType<LevelController>().StartPlanetTravel();
+        //FindObjectOfType<LevelController>().StartPlanetTravel();
 
         if (pilotSeat != null && cockpitAnimation != null)
         {

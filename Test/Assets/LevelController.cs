@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Controls when you go to next stage of game
@@ -8,27 +9,23 @@ using UnityEngine;
 public class LevelController : MonoBehaviour
 {
     private GameObject planet;
+    public GameObject loseScreen;
+    public bool gameOver = false;
 
-    public void StartPlanetTravel()
+    public void Start()
     {
-        
+        Time.timeScale = 1f;
     }
 
-    public void EnterPlanet()
+    public void LoseLevel()
     {
-        //calculate points and set what will happen in the ext screen
-        //switch to planet scene
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        planet = GameObject.Find("Planet");
-        
+        loseScreen.SetActive(true);
+        Time.timeScale = 0.3f;
+        gameOver = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ResetLevel()
     {
-       
+        SceneManager.LoadScene(1);
     }
 }
