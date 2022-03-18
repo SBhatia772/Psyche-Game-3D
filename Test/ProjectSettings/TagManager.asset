@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Terrain
   - Landing Site
+  - ShipCrashZones
   layers:
   - Default
   - TransparentFX

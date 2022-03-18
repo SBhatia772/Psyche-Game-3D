@@ -119,7 +119,7 @@ public class VattalusSpaceshipController : MonoBehaviour
 
         lastPosition = transform.position;
 
-        fuel = 10000;
+        
 
         levelController = FindObjectOfType<LevelController>().gameObject;
     }
