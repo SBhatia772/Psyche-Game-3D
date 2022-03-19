@@ -3039,7 +3039,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 175.59476, y: 5, z: 160.40753}
-  m_Center: {x: -11.782364, y: -50, z: 2.2221375}
+  m_Center: {x: -11.782364, y: -45.33, z: 2.2221375}
 --- !u!114 &586070402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3726,7 +3726,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 160.82135, y: 5, z: 169.26904}
-  m_Center: {x: -13.710846, y: -50, z: -13.889648}
+  m_Center: {x: -13.710846, y: -42.2, z: -13.889648}
 --- !u!114 &725617449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5762,7 +5762,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 108.81561, y: 5, z: 108.20874}
-  m_Center: {x: 5.1402893, y: -50, z: -2.065918}
+  m_Center: {x: 5.1402893, y: -34.5, z: -2.065918}
 --- !u!114 &1071282742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6645,7 +6645,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 81.942505, y: 5, z: 76.96686}
-  m_Center: {x: -24.679504, y: -50, z: 21.724976}
+  m_Center: {x: -24.679504, y: -31, z: 21.724976}
 --- !u!114 &1285999933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12993,7 +12993,7 @@ MonoBehaviour:
   speed: 0
   Joystick: {fileID: 1393890176043934069}
   ThrottleControl: {fileID: 1393890176043934077}
-  fuel: 10
+  fuel: 6000
   levelController: {fileID: 342283033}
   IdlingSound: {fileID: 6231880498804892293}
   ThrustSound: {fileID: 8486514732532389396}

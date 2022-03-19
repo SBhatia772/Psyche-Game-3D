@@ -364,6 +364,11 @@ public class VattalusSpaceshipController : MonoBehaviour
 
     }
 
+    public void DeployRamp()
+    {
+        ramp.Interact();
+    }
+
     private void MoveJoyStick()
     {
         if (Joystick != null)

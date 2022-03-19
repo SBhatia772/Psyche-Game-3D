@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class FollowShip : MonoBehaviour
 {
@@ -50,6 +51,18 @@ public class FollowShip : MonoBehaviour
 
         ship.gameObject.SetActive(false); 
     }
+
+    IEnumerator ChangeScene()
+    {
+        yield return new WaitForSeconds(3f);
+        DontDestroyOnLoad(ship.gameObject);
+        Destroy(ship.gameObject.GetComponent<LevelController>());
+        ship.gameObject.GetComponent<VattalusSpaceshipController>().DeployRamp();
+        SceneManager.LoadScene(2);
+       
+    }
+
+    
     
     private void OnTriggerEnter(Collider other)
     {
@@ -63,11 +76,29 @@ public class FollowShip : MonoBehaviour
                 StartCoroutine(die());
             }
             else if (isLandingSite == false)
-                points += 100;
+            {
+                if (shipRB.velocity.magnitude > crashSpeed || Mathf.Cos(Vector3.Angle(ship.transform.up, Vector3.down) * Mathf.Deg2Rad) >= -0.9f)
+                {
+                    FindObjectOfType<LevelController>().LoseLevel();
+                    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                    StartCoroutine(die());
+                }
+                else
+                    points += 100;
+            }
             else
             {
-                points += earnablePoints;
-                //Start some couroutine to change scene to first person walking around terrain
+                if (shipRB.velocity.magnitude > crashSpeed || Mathf.Cos(Vector3.Angle(ship.transform.up, Vector3.down) * Mathf.Deg2Rad) >= -0.9f)
+                {
+                    FindObjectOfType<LevelController>().LoseLevel();
+                    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                    StartCoroutine(die());
+                }
+                else
+                {
+                    points += earnablePoints;
+                    StartCoroutine(ChangeScene());
+                }
             }
 
         }
