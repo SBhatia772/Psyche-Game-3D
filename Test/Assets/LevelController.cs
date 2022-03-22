@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class LevelController : MonoBehaviour
 {
-    private GameObject planet;
     public GameObject loseScreen;
     public bool gameOver = false;
 
@@ -27,5 +26,11 @@ public class LevelController : MonoBehaviour
     public void ResetLevel()
     {
         SceneManager.LoadScene(1);
+    }
+
+    public void Exit()
+    {
+        Debug.Log("Exit Function was Called!");
+        Application.Quit();
     }
 }

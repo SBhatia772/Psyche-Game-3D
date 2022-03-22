@@ -9,6 +9,7 @@ public class VattalusSpaceshipController1 : MonoBehaviour
 {
     [Tooltip("Should the landing gear be deployed at the start of the scene?")]
     public bool DeployLandingGearByDefault = false;
+    public bool GameOver = false;
 
 
     //CONTROLS
@@ -115,8 +116,6 @@ public class VattalusSpaceshipController1 : MonoBehaviour
         if (pilotSeat == null) Debug.Log("<color=#FF0000>VattalusAssets: [ShipController] Missing pilot seat reference.</color>");
 
         lastPosition = transform.position;
-
-        fuel = 10000;
     }
 
 
@@ -134,48 +133,53 @@ public class VattalusSpaceshipController1 : MonoBehaviour
         speed = (transform.position - lastPosition).magnitude/Time.fixedDeltaTime;
         lastPosition = transform.position;
 
-        if (fuel < 0)
-        {
-            fuel = 0;
-            Debug.Log("Game Over!");
 
+        if (fuel < 0)
+            fuel = 0;
+
+        if (fuel == 0 && !GameOver)
+        {
+            gameObject.GetComponent<LevelController1>().loseScreen.SetActive(true);
+            GameOver = true;
         }
 
-        //We set the command inputs based on keypresses (or other input methods). They will be processed later
-        accelerationInput = 0f;
-        strafeInput = 0f;
-        upDownInput = 0f;
-        rollInput = 0f;
-        pitchInput = 0f;
-        yawInput = 0f;
+        if (GameOver == false)
+        {
+            //We set the command inputs based on keypresses (or other input methods). They will be processed later
+            accelerationInput = 0f;
+            strafeInput = 0f;
+            upDownInput = 0f;
+            rollInput = 0f;
+            pitchInput = 0f;
+            yawInput = 0f;
 
-        //Get inputs
-        if (enableMovement)
-        { 
-
-            if (Input.GetKey(accelerateInputKey)) accelerationInput = 50f; 
-            if (Input.GetKey(decelerateInputKey)) accelerationInput = -50f;
-
-            if (Input.GetKey(strafeRightInputKey))
+            //Get inputs
+            if (enableMovement)
             {
-                strafeInput = 1f;
-            }
-            if (Input.GetKey(strafeLeftInputKey))
-            {
-                strafeInput -= 1f;
-            }
-            if (Input.GetKey(moveUpInputKey)) upDownInput = 1f; if (Input.GetKey(moveDownInputKey)) upDownInput -= 1f;
-            if (Input.GetKey(rollRightInputKey)) rollInput = 1f; if (Input.GetKey(rollLeftInputKey)) rollInput -= 1f;
-            if (Input.GetKey(pitchUp)) pitchInput = 1f; if (Input.GetKey(pitchDown)) pitchInput -= 1f;
-            if (Input.GetKey(yawRight)) yawInput = 1f; if (Input.GetKey(yawLeft)) yawInput -= 1f;
+
+                if (Input.GetKey(accelerateInputKey)) accelerationInput = 50f;
+                if (Input.GetKey(decelerateInputKey)) accelerationInput = -50f;
+
+                if (Input.GetKey(strafeRightInputKey))
+                {
+                    strafeInput = 1f;
+                }
+                if (Input.GetKey(strafeLeftInputKey))
+                {
+                    strafeInput -= 1f;
+                }
+                if (Input.GetKey(moveUpInputKey)) upDownInput = 1f; if (Input.GetKey(moveDownInputKey)) upDownInput -= 1f;
+                if (Input.GetKey(rollRightInputKey)) rollInput = 1f; if (Input.GetKey(rollLeftInputKey)) rollInput -= 1f;
+                if (Input.GetKey(pitchUp)) pitchInput = 1f; if (Input.GetKey(pitchDown)) pitchInput -= 1f;
+                if (Input.GetKey(yawRight)) yawInput = 1f; if (Input.GetKey(yawLeft)) yawInput -= 1f;
 
 
-            //Add movement force
-            if (rb != null)
-            {
-                ////MOVEMENT   (Actual ship movement is not implemented, as it would be outside the scope of this demo, in order to achieve the desired effect, I instead chose to rotate the whole environment around the ship to fake movement)
-                //              the code below is a very basic implementation of physics movement using forces applied to the rigidbody
-                
+                //Add movement force
+                if (rb != null)
+                {
+                    ////MOVEMENT   (Actual ship movement is not implemented, as it would be outside the scope of this demo, in order to achieve the desired effect, I instead chose to rotate the whole environment around the ship to fake movement)
+                    //              the code below is a very basic implementation of physics movement using forces applied to the rigidbody
+
                     //Apply move speed
                     if (accelerationInput > 0f && fuel > 0)
                     {
@@ -183,7 +187,7 @@ public class VattalusSpaceshipController1 : MonoBehaviour
                         transform.position += transform.forward * accelerationInput * Time.deltaTime;
 
                         fuel -= 1f;
-                        
+
                     }
                     if (accelerationInput < 0f && fuel > 0)
                     {
@@ -217,94 +221,95 @@ public class VattalusSpaceshipController1 : MonoBehaviour
                         yawInput * yawThrust * Time.deltaTime,
                        rollInput * -rollThrust * Time.deltaTime
                        );
-                
 
 
-                //Apply thruster effects
-                if (listOfThrusters != null)
-                {
-                    foreach (var thruster in listOfThrusters)
+
+                    //Apply thruster effects
+                    if (listOfThrusters != null)
                     {
-                        if (thruster == null) continue;
+                        foreach (var thruster in listOfThrusters)
+                        {
+                            if (thruster == null) continue;
 
-                        //by default, all thrusters will decay
-                        thruster.SetThrust(0f);
+                            //by default, all thrusters will decay
+                            thruster.SetThrust(0f);
 
-                        //Depending on which input is given to the spaceship, enable thrust effects on thrusters whose directions correspond with given input
-                        if (accelerationInput > 0 && fuel > 0 && thruster.usedForAcceleration) thruster.SetThrust(accelerationInput);
-                        if (accelerationInput < 0 && fuel > 0 && thruster.usedForDeceleration) thruster.SetThrust(-accelerationInput);
+                            //Depending on which input is given to the spaceship, enable thrust effects on thrusters whose directions correspond with given input
+                            if (accelerationInput > 0 && fuel > 0 && thruster.usedForAcceleration) thruster.SetThrust(accelerationInput);
+                            if (accelerationInput < 0 && fuel > 0 && thruster.usedForDeceleration) thruster.SetThrust(-accelerationInput);
 
-                        if (strafeInput > 0 && fuel > 0 && thruster.usedForStrafeRight) thruster.SetThrust(strafeInput);
-                        if (strafeInput < 0 && fuel > 0 && thruster.usedForStrafeLeft) thruster.SetThrust(-strafeInput);
-                        
-                        if (upDownInput > 0 && fuel > 0 &&  thruster.usedForMoveUp) thruster.SetThrust(upDownInput);
-                        if (upDownInput < 0 && fuel > 0 && thruster.usedForMoveDown) thruster.SetThrust(-upDownInput);
+                            if (strafeInput > 0 && fuel > 0 && thruster.usedForStrafeRight) thruster.SetThrust(strafeInput);
+                            if (strafeInput < 0 && fuel > 0 && thruster.usedForStrafeLeft) thruster.SetThrust(-strafeInput);
 
-                        if (rollInput > 0 && fuel > 0 && thruster.usedForRollRight) thruster.SetThrust(rollInput);
-                        if (rollInput < 0 && fuel > 0 && thruster.usedForRollLeft) thruster.SetThrust(-rollInput);
+                            if (upDownInput > 0 && fuel > 0 && thruster.usedForMoveUp) thruster.SetThrust(upDownInput);
+                            if (upDownInput < 0 && fuel > 0 && thruster.usedForMoveDown) thruster.SetThrust(-upDownInput);
 
-                        if (pitchInput > 0 && fuel > 0 && thruster.usedForPitchUp) thruster.SetThrust(pitchInput);
-                        if (pitchInput < 0 && fuel > 0 && thruster.usedForPitchDown) thruster.SetThrust(-pitchInput);
+                            if (rollInput > 0 && fuel > 0 && thruster.usedForRollRight) thruster.SetThrust(rollInput);
+                            if (rollInput < 0 && fuel > 0 && thruster.usedForRollLeft) thruster.SetThrust(-rollInput);
 
-                        if (yawInput > 0 && fuel > 0 && thruster.usedForYawRight) thruster.SetThrust(yawInput);
-                        if (yawInput < 0 && fuel > 0 && thruster.usedForYawLeft) thruster.SetThrust(-yawInput);
+                            if (pitchInput > 0 && fuel > 0 && thruster.usedForPitchUp) thruster.SetThrust(pitchInput);
+                            if (pitchInput < 0 && fuel > 0 && thruster.usedForPitchDown) thruster.SetThrust(-pitchInput);
+
+                            if (yawInput > 0 && fuel > 0 && thruster.usedForYawRight) thruster.SetThrust(yawInput);
+                            if (yawInput < 0 && fuel > 0 && thruster.usedForYawLeft) thruster.SetThrust(-yawInput);
+                        }
                     }
                 }
             }
+
+            //Move Joystick / Throttle control
+            if (Joystick != null)
+            {
+                joystickAngleTarget = new Vector3(
+                    Mathf.Lerp(25f, -25f, (pitchInput + 1f) / 2f),
+                    Mathf.Lerp(-20f, 20f, (rollInput + 1f) / 2f),
+                    Mathf.Lerp(-19f, 19f, (yawInput + 1f) / 2f));
+
+                Joystick.localRotation = Quaternion.Lerp(Joystick.transform.localRotation, Quaternion.Euler(joystickAngleTarget), 5f * Time.deltaTime);
+            }
+
+            if (ThrottleControl != null)
+            {
+                throttleAngleTarget = Mathf.Lerp(throttleAngleTarget, Mathf.Lerp(-33f, 33f, (accelerationInput + 1f) / 2f), 5f * Time.deltaTime);
+                ThrottleControl.localRotation = Quaternion.Euler(throttleAngleTarget, 0f, 0f);
+            }
+
+            //handle interaction inputs
+            if (Input.GetKeyDown(landingGearKey)) DeployLandingGear();
+            if (Input.GetKeyDown(rampKey) && ramp != null) ramp.Interact();
+            if (Input.GetKeyDown(hologramKey) && hologram != null) hologram.Interact();
+
+            //Handle sound effects
+            if (IdlingSound != null) IdlingSound.SetInput(enableMovement ? 1f - Mathf.Abs(accelerationInput) : 0f); //idling sound will play when player in pilot seat but not accelerating
+            if (ThrustSound != null) ThrustSound.SetInput(Mathf.Clamp01(Mathf.Max(accelerationInput)));
+            if (RevThrustSound != null) RevThrustSound.SetInput(Mathf.Clamp01(-accelerationInput));
+            float maneuverintensity = Mathf.Clamp01(Mathf.Abs(strafeInput) + Mathf.Abs(upDownInput) + Mathf.Abs(rollInput) + Mathf.Abs(pitchInput) + Mathf.Abs(yawInput));
+            if (ManeuverSound != null) ManeuverSound.SetInput(maneuverintensity);
+
+            //Handle shaking
+            float shakeAmplitude = 0f;
+            shakeAmplitude += Mathf.Lerp(0f, accelerationShakeAmplitude, Mathf.Clamp01(accelerationInput));
+            shakeAmplitude += Mathf.Lerp(0f, reverseShakeAmplitude, Mathf.Clamp01(-accelerationInput));
+            shakeAmplitude += Mathf.Lerp(0f, maneuveringShakeAmplitude, Mathf.Clamp01(maneuverintensity));
+
+            float shakeFreq = 1f;
+            shakeFreq += Mathf.Lerp(0f, accelerationShakeFrequency, Mathf.Clamp01(accelerationInput));
+            shakeFreq += Mathf.Lerp(0f, reversetionShakeFrequency, Mathf.Clamp01(-accelerationInput));
+            shakeFreq += Mathf.Lerp(0f, maneuveringShakeFrequency, Mathf.Clamp01(maneuverintensity - Mathf.Abs(accelerationInput) * 0.65f));
+
+            shakeValues = Vector2.Lerp(shakeValues, new Vector2(shakeAmplitude, shakeFreq), shakeSmoothingSpeed * Time.deltaTime);
+
+            VattalusCameraShake.Shake(shakeValues.x, shakeValues.y);
+
+            //check if cockpit door is interacted with
+            if (cockpitDoor != null)
+            {
+                if (cockpitDoorLastFrameState != cockpitDoor.isActivated) CockpitDoorInteracted();
+
+                cockpitDoorLastFrameState = cockpitDoor.isActivated;
+            }
+
         }
-
-        //Move Joystick / Throttle control
-        if (Joystick != null)
-        {
-            joystickAngleTarget = new Vector3(
-                Mathf.Lerp(25f, -25f, (pitchInput + 1f) / 2f),
-                Mathf.Lerp(-20f, 20f, (rollInput + 1f) / 2f),
-                Mathf.Lerp(-19f, 19f, (yawInput + 1f) / 2f));
-
-            Joystick.localRotation = Quaternion.Lerp(Joystick.transform.localRotation, Quaternion.Euler(joystickAngleTarget), 5f * Time.deltaTime);
-        }
-
-        if (ThrottleControl != null)
-        {
-            throttleAngleTarget = Mathf.Lerp(throttleAngleTarget, Mathf.Lerp(-33f, 33f, (accelerationInput + 1f) / 2f), 5f * Time.deltaTime);
-            ThrottleControl.localRotation = Quaternion.Euler(throttleAngleTarget, 0f, 0f);
-        }
-
-        //handle interaction inputs
-        if (Input.GetKeyDown(landingGearKey)) DeployLandingGear();
-        if (Input.GetKeyDown(rampKey) && ramp != null) ramp.Interact();
-        if (Input.GetKeyDown(hologramKey) && hologram != null) hologram.Interact();
-
-        //Handle sound effects
-        if (IdlingSound != null) IdlingSound.SetInput(enableMovement ? 1f - Mathf.Abs(accelerationInput) : 0f); //idling sound will play when player in pilot seat but not accelerating
-        if (ThrustSound != null) ThrustSound.SetInput(Mathf.Clamp01(Mathf.Max(accelerationInput)));
-        if (RevThrustSound != null) RevThrustSound.SetInput(Mathf.Clamp01(-accelerationInput));
-        float maneuverintensity = Mathf.Clamp01(Mathf.Abs(strafeInput) + Mathf.Abs(upDownInput) + Mathf.Abs(rollInput) + Mathf.Abs(pitchInput) + Mathf.Abs(yawInput));
-        if (ManeuverSound != null) ManeuverSound.SetInput(maneuverintensity);
-
-        //Handle shaking
-        float shakeAmplitude = 0f;
-        shakeAmplitude += Mathf.Lerp(0f, accelerationShakeAmplitude, Mathf.Clamp01(accelerationInput));
-        shakeAmplitude += Mathf.Lerp(0f, reverseShakeAmplitude, Mathf.Clamp01(-accelerationInput));
-        shakeAmplitude += Mathf.Lerp(0f, maneuveringShakeAmplitude, Mathf.Clamp01(maneuverintensity));
-
-        float shakeFreq = 1f;
-        shakeFreq += Mathf.Lerp(0f, accelerationShakeFrequency, Mathf.Clamp01(accelerationInput));
-        shakeFreq += Mathf.Lerp(0f, reversetionShakeFrequency, Mathf.Clamp01(-accelerationInput));
-        shakeFreq += Mathf.Lerp(0f, maneuveringShakeFrequency, Mathf.Clamp01(maneuverintensity - Mathf.Abs(accelerationInput) * 0.65f));
-
-        shakeValues = Vector2.Lerp(shakeValues, new Vector2(shakeAmplitude, shakeFreq), shakeSmoothingSpeed * Time.deltaTime);
-
-        VattalusCameraShake.Shake(shakeValues.x, shakeValues.y);
-
-        //check if cockpit door is interacted with
-        if (cockpitDoor != null)
-        {
-            if (cockpitDoorLastFrameState != cockpitDoor.isActivated) CockpitDoorInteracted();
-
-            cockpitDoorLastFrameState = cockpitDoor.isActivated;
-        }
-
     }
 
     private void DeployLandingGear(bool instant = false)

@@ -78,6 +78,8 @@ public class VattalusSceneController1 : MonoBehaviour
     private VattalusInteractible lookingAtInteractible = null;
     private VattalusInteractible currentlyOccupiedSeat = null; //reference to the seat the player is currently sitting in
 
+    public bool GameOver;
+
     void Start()
     {
         Application.targetFrameRate = 60;
@@ -118,132 +120,138 @@ public class VattalusSceneController1 : MonoBehaviour
 
         SetPlayerControl(ControlModeTypes.Walking);
         SetCameraMode(CameraModes.Player);
+
+        GameOver = FindObjectOfType<VattalusSpaceshipController1>().GameOver;
     }
 
     void Update()
     {
-        lookingAtInteractible = null;
 
-        //Check if the cursor is looking at an interactible object
-        if (firstPersonController != null && firstPersonController.cameraComponent != null && firstPersonController.cameraComponent.gameObject.activeInHierarchy)
+        if (GameOver == false)
         {
-            VattalusInteractible interactibleObj = null;
-            RaycastHit hit;
-            var cameraCenter = firstPersonController.cameraComponent.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, firstPersonController.cameraComponent.nearClipPlane));
-            if (Physics.Raycast(cameraCenter, firstPersonController.cameraComponent.transform.forward, out hit, 2f))
-            {
-                interactibleObj = hit.collider.GetComponent<VattalusInteractible>();
-            }
+            lookingAtInteractible = null;
 
-            //player is looking at an interactible object
-            if (interactibleObj != null)
+            //Check if the cursor is looking at an interactible object
+            if (firstPersonController != null && firstPersonController.cameraComponent != null && firstPersonController.cameraComponent.gameObject.activeInHierarchy)
             {
-                lookingAtInteractible = interactibleObj;
-            }
-        }
-
-        //when looking at an interactible and pressing the interaction button
-        if (lookingAtInteractible != null && lookingAtInteractible.CanInteract && Input.GetKeyDown(interactionKey))
-        {
-            lookingAtInteractible.Interact();
-            if (lookingAtInteractible.isSeat)
-            {
-                //if the seat is unoccupied, tell player to sit down. If its occupied, tell player to stand up
-                if (lookingAtInteractible.isActivated)
-                    SitPlayerDown(lookingAtInteractible);
-                else
-                    StandPlayerUp();
-            }
-
-            //some custom checks very specific to this example scene
-            if (spaceshipController != null)
-            {
-                if (lookingAtInteractible == spaceshipController.pilotSeat)
+                VattalusInteractible interactibleObj = null;
+                RaycastHit hit;
+                var cameraCenter = firstPersonController.cameraComponent.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, firstPersonController.cameraComponent.nearClipPlane));
+                if (Physics.Raycast(cameraCenter, firstPersonController.cameraComponent.transform.forward, out hit, 2f))
                 {
-                    spaceshipController.SitInPilotSeat();
+                    interactibleObj = hit.collider.GetComponent<VattalusInteractible>();
+                }
+
+                //player is looking at an interactible object
+                if (interactibleObj != null)
+                {
+                    lookingAtInteractible = interactibleObj;
                 }
             }
-        }
 
-        //When pressing the 'stand up' key, check if we are currently sitting down, then tell player to stand up
-        if (currentlyOccupiedSeat != null && Input.GetKeyDown(standUpKey))
-        {
-            currentlyOccupiedSeat.Interact();
-            StandPlayerUp();
-        }
-
-        //When seated, always show a special UI hint to stand up
-        standUpPrompt.gameObject.SetActive(currentlyOccupiedSeat != null);
-        interactPrompt.gameObject.SetActive(lookingAtInteractible != null);
-
-        bool inPilotSeat = false;
-
-        if (currentlyOccupiedSeat != null)
-        {
-            string standUpPromptText = currentlyOccupiedSeat.isActivated ? currentlyOccupiedSeat.deactivateText : currentlyOccupiedSeat.activateText;
-            if (string.IsNullOrEmpty(standUpPromptText)) standUpPromptText = "Stand Up";
-
-            standUpPrompt.UpdateKeyPromptTexts(standUpPromptText, standUpKey.ToString(), currentlyOccupiedSeat.CanInteract);
-
-            //if below conditions are met, we are sitting in the pilot seat
-            if (spaceshipController != null && currentlyOccupiedSeat == spaceshipController.pilotSeat)
+            //when looking at an interactible and pressing the interaction button
+            if (lookingAtInteractible != null && lookingAtInteractible.CanInteract && Input.GetKeyDown(interactionKey))
             {
-                inPilotSeat = true;
+                lookingAtInteractible.Interact();
+                if (lookingAtInteractible.isSeat)
+                {
+                    //if the seat is unoccupied, tell player to sit down. If its occupied, tell player to stand up
+                    if (lookingAtInteractible.isActivated)
+                        SitPlayerDown(lookingAtInteractible);
+                    else
+                        StandPlayerUp();
+                }
+
+                //some custom checks very specific to this example scene
+                if (spaceshipController != null)
+                {
+                    if (lookingAtInteractible == spaceshipController.pilotSeat)
+                    {
+                        spaceshipController.SitInPilotSeat();
+                    }
+                }
             }
-        }
 
-        if (lookingAtInteractible != null)
-        {
-            string interactionPromptText = lookingAtInteractible.isActivated ? lookingAtInteractible.deactivateText : lookingAtInteractible.activateText;
-            if (string.IsNullOrEmpty(interactionPromptText)) interactionPromptText = "Interact";
+            //When pressing the 'stand up' key, check if we are currently sitting down, then tell player to stand up
+            if (currentlyOccupiedSeat != null && Input.GetKeyDown(standUpKey))
+            {
+                currentlyOccupiedSeat.Interact();
+                StandPlayerUp();
+            }
 
-            interactPrompt.UpdateKeyPromptTexts(interactionPromptText, interactionKey.ToString(), lookingAtInteractible.CanInteract);
-        }
+            //When seated, always show a special UI hint to stand up
+            standUpPrompt.gameObject.SetActive(currentlyOccupiedSeat != null);
+            interactPrompt.gameObject.SetActive(lookingAtInteractible != null);
 
-        //When sitting in the pilot seat, enable additional controls, and update the ui to show prompts
-        if (UI_Background != null) UI_Background.SetActive(inPilotSeat);
+            bool inPilotSeat = false;
 
-        if (hologramPrompt != null) hologramPrompt.gameObject.SetActive(inPilotSeat);
-        if (landingGearPrompt != null) landingGearPrompt.gameObject.SetActive(inPilotSeat);
-        if (rampPrompt != null) rampPrompt.gameObject.SetActive(inPilotSeat);
-        if (cameraPrompt != null) cameraPrompt.gameObject.SetActive(inPilotSeat);
-        if (hideUIPrompt != null) hideUIPrompt.gameObject.SetActive(inPilotSeat);
+            if (currentlyOccupiedSeat != null)
+            {
+                string standUpPromptText = currentlyOccupiedSeat.isActivated ? currentlyOccupiedSeat.deactivateText : currentlyOccupiedSeat.activateText;
+                if (string.IsNullOrEmpty(standUpPromptText)) standUpPromptText = "Stand Up";
 
-        if (shipControlsPrompt != null) shipControlsPrompt.gameObject.SetActive(inPilotSeat);
+                standUpPrompt.UpdateKeyPromptTexts(standUpPromptText, standUpKey.ToString(), currentlyOccupiedSeat.CanInteract);
 
-        if (inPilotSeat)
-        {
-            if (landingGearPrompt != null) landingGearPrompt.UpdateKeyPromptTexts("Landing Gear", spaceshipController.landingGearKey.ToString(), !spaceshipController.IsLandingGearAnimating());
-            if (rampPrompt != null) rampPrompt.UpdateKeyPromptTexts("Ramp", spaceshipController.rampKey.ToString(), spaceshipController.ramp ? spaceshipController.ramp.CanInteract : true);
-        }
+                //if below conditions are met, we are sitting in the pilot seat
+                if (spaceshipController != null && currentlyOccupiedSeat == spaceshipController.pilotSeat)
+                {
+                    inPilotSeat = true;
+                }
+            }
 
-        //only enable spaceship controls when sitting in the pilot seat
-        if (spaceshipController != null) spaceshipController.enableMovement = inPilotSeat;
+            if (lookingAtInteractible != null)
+            {
+                string interactionPromptText = lookingAtInteractible.isActivated ? lookingAtInteractible.deactivateText : lookingAtInteractible.activateText;
+                if (string.IsNullOrEmpty(interactionPromptText)) interactionPromptText = "Interact";
 
-        //When pressing the camera key, switch between camera modes
-        if (inPilotSeat && Input.GetKeyDown(cameraKey))
-        {
-            CameraModes newCamMode = CameraModes.Player;
-            if (cameraMode == CameraModes.Player) newCamMode = CameraModes.ShipOrbit;
-            if (cameraMode == CameraModes.ShipOrbit) newCamMode = CameraModes.Player;
+                interactPrompt.UpdateKeyPromptTexts(interactionPromptText, interactionKey.ToString(), lookingAtInteractible.CanInteract);
+            }
 
-            SetCameraMode(newCamMode);
-        }
+            //When sitting in the pilot seat, enable additional controls, and update the ui to show prompts
+            if (UI_Background != null) UI_Background.SetActive(inPilotSeat);
 
-        //disable reticle when in orbit camera
-        if (reticle != null) reticle.SetActive(cameraMode == CameraModes.Player);
+            if (hologramPrompt != null) hologramPrompt.gameObject.SetActive(inPilotSeat);
+            if (landingGearPrompt != null) landingGearPrompt.gameObject.SetActive(inPilotSeat);
+            if (rampPrompt != null) rampPrompt.gameObject.SetActive(inPilotSeat);
+            if (cameraPrompt != null) cameraPrompt.gameObject.SetActive(inPilotSeat);
+            if (hideUIPrompt != null) hideUIPrompt.gameObject.SetActive(inPilotSeat);
+
+            if (shipControlsPrompt != null) shipControlsPrompt.gameObject.SetActive(inPilotSeat);
+
+            if (inPilotSeat)
+            {
+                if (landingGearPrompt != null) landingGearPrompt.UpdateKeyPromptTexts("Landing Gear", spaceshipController.landingGearKey.ToString(), !spaceshipController.IsLandingGearAnimating());
+                if (rampPrompt != null) rampPrompt.UpdateKeyPromptTexts("Ramp", spaceshipController.rampKey.ToString(), spaceshipController.ramp ? spaceshipController.ramp.CanInteract : true);
+            }
+
+            //only enable spaceship controls when sitting in the pilot seat
+            if (spaceshipController != null) spaceshipController.enableMovement = inPilotSeat;
+
+            //When pressing the camera key, switch between camera modes
+            if (inPilotSeat && Input.GetKeyDown(cameraKey))
+            {
+                CameraModes newCamMode = CameraModes.Player;
+                if (cameraMode == CameraModes.Player) newCamMode = CameraModes.ShipOrbit;
+                if (cameraMode == CameraModes.ShipOrbit) newCamMode = CameraModes.Player;
+
+                SetCameraMode(newCamMode);
+            }
+
+            //disable reticle when in orbit camera
+            if (reticle != null) reticle.SetActive(cameraMode == CameraModes.Player);
 
 
-        //Hide UI
-        if (Input.GetKeyDown(hideUIKey) && KeyPromptsParent != null)
-        {
-            KeyPromptsParent.SetActive(!KeyPromptsParent.activeSelf);
-        }
+            //Hide UI
+            if (Input.GetKeyDown(hideUIKey) && KeyPromptsParent != null)
+            {
+                KeyPromptsParent.SetActive(!KeyPromptsParent.activeSelf);
+            }
 
 #if !UNITY_EDITOR
                 if (Input.GetKeyDown(KeyCode.Escape))
                     Application.Quit();
 #endif
+        }
     }
 
     private void SetPlayerControl(ControlModeTypes newMode)

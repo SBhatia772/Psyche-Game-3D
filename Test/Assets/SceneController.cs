@@ -16,7 +16,6 @@ public class SceneController : MonoBehaviour
         Destroy(ship.GetComponent<VattalusSpaceshipController>());
         ship.GetComponent<Rigidbody>().isKinematic = true;
         
-        
     }
 
     // Update is called once per frame
