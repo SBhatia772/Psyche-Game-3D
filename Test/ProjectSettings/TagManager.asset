@@ -7,6 +7,9 @@ TagManager:
   - Terrain
   - Landing Site
   - ShipCrashZones
+  - Landing Gear Back Left
+  - Landing Gear Back Right
+  - Landing Gear Front
   layers:
   - Default
   - TransparentFX

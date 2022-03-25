@@ -136,19 +136,18 @@ public class VattalusSpaceshipController : MonoBehaviour
     {
         if (Input.GetKeyDown(landingGearKey) && levelController.GetComponent<LevelController>().gameOver == false)
         {
-            Debug.Log("G Pressed");
+            //Debug.Log("G Pressed");
             if (IsLandingGearDeployed())
             {
-                Debug.Log("Disabling Collider");
+                //Debug.Log("Disabling Collider");
                 foreach (var landingGear in landingGearColliders)
                 {
-
                     landingGear.GetComponent<BoxCollider>().enabled = false;
                 }
             }
             else if(IsLandingGearDeployed() == false)
             {
-                Debug.Log("Enabling Collider");
+                //.Log("Enabling Collider");
                 foreach (var landingGear in landingGearColliders)
                 {
                     landingGear.GetComponent<BoxCollider>().enabled = true;

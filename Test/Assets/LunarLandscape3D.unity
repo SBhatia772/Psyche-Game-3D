@@ -1444,7 +1444,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.92672366, b: 0.759434, a: 1}
+  m_Color: {r: 1, g: 0.76556766, b: 0.7607843, a: 1}
   m_Intensity: 5
   m_Range: 10
   m_SpotAngle: 30
@@ -1774,6 +1774,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsKinematic
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2792565529220589616, guid: 00353c3a58bb7a747882f6badb933d0c,
+        type: 3}
+      propertyPath: m_Intensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2792565529220589616, guid: 00353c3a58bb7a747882f6badb933d0c,
+        type: 3}
+      propertyPath: m_Shadows.m_Bias
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 9135457136967617377, guid: 00353c3a58bb7a747882f6badb933d0c,
         type: 3}
