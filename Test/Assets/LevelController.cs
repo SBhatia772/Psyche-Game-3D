@@ -13,6 +13,7 @@ public class LevelController : MonoBehaviour
 
     public void Start()
     {
+        Cursor.visible = true;
         Time.timeScale = 1f;
     }
 

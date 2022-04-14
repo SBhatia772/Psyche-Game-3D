@@ -122,6 +122,8 @@ public class VattalusSceneController1 : MonoBehaviour
         SetCameraMode(CameraModes.Player);
 
         GameOver = FindObjectOfType<VattalusSpaceshipController1>().GameOver;
+
+        Cursor.visible = true;
     }
 
     void Update()

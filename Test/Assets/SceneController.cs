@@ -19,6 +19,8 @@ public class SceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.visible = true;
+
         ship = FindObjectOfType<VattalusSpaceshipController>().gameObject;
 
         Vector3 playerPosition = new Vector3(ship.transform.position.x+10,ship.transform.position.y, ship.transform.position.z);
