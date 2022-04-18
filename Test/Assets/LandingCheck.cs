@@ -55,6 +55,8 @@ public class LandingCheck : MonoBehaviour
 
     IEnumerator die()
     {
+        Destroy(FindObjectOfType<TextSpawner>());
+
         points = 0;
         BoxCollider shipCollider = GameObject.Find("Space Ship Collider").GetComponent<BoxCollider>();
         yield return new WaitForSeconds(0.1f);
@@ -72,10 +74,13 @@ public class LandingCheck : MonoBehaviour
     IEnumerator ChangeScene()
     {
         yield return new WaitForSeconds(3f);
-        DontDestroyOnLoad(ship.gameObject);
-        Destroy(ship.gameObject.GetComponent<LevelController>());
-        ship.gameObject.GetComponent<VattalusSpaceshipController>().DeployRamp();
-        SceneManager.LoadScene(2);
+        if (GameOver == false)
+        {
+            DontDestroyOnLoad(ship.gameObject);
+            Destroy(ship.gameObject.GetComponent<LevelController>());
+            ship.gameObject.GetComponent<VattalusSpaceshipController>().DeployRamp();
+            SceneManager.LoadScene(2);
+        }
 
     }
 
