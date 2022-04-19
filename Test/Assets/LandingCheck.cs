@@ -156,25 +156,47 @@ public class LandingCheck : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
+        Debug.Log("leaving the ground!");
+        
+
         ContactPoint[] contact = new ContactPoint[1];
         collision.GetContacts(contact);
 
 
-        landinGearScript gear = contact[0].thisCollider.GetComponent<landinGearScript>();
+        List<GameObject> gear = landingGears;
+        //contact[0].thisCollider.GetComponent<landinGearScript>();
 
 
         if (gear == null) return;
 
+
+        for (int i = 0; i < gear.Count; i++)
+        {
+
+            if (gear[i].GetComponent<landinGearScript>().landed == true)
+            {
+                gear[i].GetComponent<landinGearScript>().landed = false;
+                gearsOnGround -= 1;
+            }
+        }
+
         //Debug.Log("It is a Gear Collider");
-        if (gear.landed == true)
+        /*if (gear.landed == true)
         {
             //Debug.Log("Gear landed false now set to true");
             gearsOnGround--;
             gear.landed = false;
 
+        }*/
+
+        if (gearsOnGround == 0)
+        {
+            Debug.Log("reset!");
+            playerWasGivenPoints = false;
         }
 
         playerWasGivenPoints = false;
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -219,7 +241,6 @@ public class LandingCheck : MonoBehaviour
         }
 
         
-
         if (collision.gameObject.CompareTag("Terrain"))
         {
             //Debug.Log("Terrain Detected!");
@@ -241,7 +262,7 @@ public class LandingCheck : MonoBehaviour
                 }
                 else
                 {
-                    if (GearsLanded() && gearsOnGround == 3 && GameOver == false && playerWasGivenPoints == false)
+                    if (GearsLanded() && GameOver == false && playerWasGivenPoints == false)
                     {
                         Debug.Log("Touch Down!");
                         print("number of legs on ground " + gearsOnGround.ToString());
@@ -266,7 +287,7 @@ public class LandingCheck : MonoBehaviour
                 else
                 {
 
-                    if (GearsLanded() && gearsOnGround == 3 && GameOver == false && playerWasGivenPoints == false)
+                    if (GearsLanded() && GameOver == false && playerWasGivenPoints == false)
                     {
                         points += earnablePoints;
 
@@ -280,4 +301,7 @@ public class LandingCheck : MonoBehaviour
 
         }
     }
+
+
+
 }
